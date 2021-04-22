@@ -1,0 +1,22 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: tekton
+  labels:
+    app: tekton
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: hollisc-inventory-management-svc-solution-master
+      bindings:
+        - kind: TriggerBinding
+          ref: trigger-binding
+      interceptors:
+        - cel:
+            filter: >-
+              header.match('X-GitHub-Event', 'push') && body.ref ==
+              'refs/heads/master' && body.repository.full_name ==
+              'csantanapr-cn-toolkit-tests/inventory-management-svc-solution'
+      template:
+        name: inventory-management-svc-solution
+   
